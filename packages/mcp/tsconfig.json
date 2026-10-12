@@ -1,0 +1,13 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "./dist",
+    "rootDir": "./src",
+    "paths": {
+      "@sherlock/core": ["../core/dist/index.d.ts"],
+      "@sherlock/review": ["../review/dist/index.d.ts"],
+      "@sherlock/verification": ["../verification/dist/index.d.ts"]
+    }
+  },
+  "include": ["src/**/*"]
+}

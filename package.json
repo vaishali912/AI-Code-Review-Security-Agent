@@ -1,0 +1,23 @@
+{
+  "name": "sherlock-monorepo",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Sherlock: AI Code Review Security Agent with Deterministic SAST, Reachability Triage, and Verification Engine",
+  "workspaces": [
+    "packages/*"
+  ],
+  "scripts": {
+    "build": "npm run build --workspaces --if-present",
+    "test": "npm run test --workspaces --if-present",
+    "lint": "eslint packages/*/src",
+    "sherlock": "node packages/cli/dist/index.js",
+    "dev:dashboard": "npm run dev --workspace=@sherlock/dashboard"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  }
+}

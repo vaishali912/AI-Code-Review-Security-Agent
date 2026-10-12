@@ -1,0 +1,25 @@
+{
+  "name": "@sherlock/cli",
+  "version": "1.0.0",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "type": "module",
+  "bin": {
+    "sherlock": "dist/index.js"
+  },
+  "scripts": {
+    "build": "tsc"
+  },
+  "dependencies": {
+    "@sherlock/core": "1.0.0",
+    "@sherlock/review": "1.0.0",
+    "@sherlock/verification": "1.0.0",
+    "@sherlock/mcp": "1.0.0",
+    "commander": "^13.1.0",
+    "picocolors": "^1.1.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.0",
+    "typescript": "^5.7.0"
+  }
+}

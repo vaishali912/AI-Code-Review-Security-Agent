@@ -1,0 +1,32 @@
+version: "1.0"
+ignorePaths:
+  - "**/node_modules/**"
+  - "**/dist/**"
+  - "**/.next/**"
+  - "**/*.test.ts"
+  - "**/*.spec.ts"
+
+gate:
+  failOnSeverity: "high" # fail build if >= high severity findings exist
+  blockOnNewOnly: true
+  maxFindings: 10
+
+review:
+  commentCap: 10
+  showMermaidDiagrams: true
+  enabledLanes:
+    - "security"
+    - "bug"
+    - "quality"
+    - "performance"
+    - "tests"
+  suppressLowConfidence: true
+
+verification:
+  exploitProofEnabled: true
+  sandboxTimeoutSeconds: 120
+
+customSanitizers:
+  - name: "safeQueryParam"
+    cwe: ["CWE-89"]
+    sanitizes: ["string"]
