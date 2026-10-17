@@ -7,11 +7,13 @@
     "packages/*"
   ],
   "scripts": {
+    "dev": "npm run dev --prefix packages/dashboard",
+    "start": "npm run dev --prefix packages/dashboard",
     "build": "npm run build --workspaces --if-present",
     "test": "npm run test --workspaces --if-present",
-    "lint": "eslint packages/*/src",
     "sherlock": "node packages/cli/dist/index.js",
-    "dev:dashboard": "npm run dev --workspace=@sherlock/dashboard"
+    "scan": "node packages/cli/dist/index.js scan benchmark/vulnerable-app",
+    "mcp": "node packages/cli/dist/index.js mcp"
   },
   "devDependencies": {
     "@types/node": "^22.10.0",
