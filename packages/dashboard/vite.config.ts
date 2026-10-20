@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
+import tailwindcss from '@tailwindcss/vite';
 import * as path from 'path';
 import { fileURLToPath } from 'url';
 
@@ -10,6 +11,7 @@ const rootRepoDir = path.resolve(__dirname, '../..');
 export default defineConfig({
   plugins: [
     react(),
+    tailwindcss(),
     {
       name: 'sherlock-live-api',
       configureServer(server) {
