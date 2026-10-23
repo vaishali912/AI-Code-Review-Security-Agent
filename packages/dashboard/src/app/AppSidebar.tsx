@@ -1,17 +1,17 @@
 import React, { useState } from 'react';
 import { NavLink } from 'react-router-dom';
 import { 
-  ShieldAlert, 
+  LayoutDashboard,
   GitPullRequest, 
-  Terminal as TerminalIcon, 
+  ShieldAlert, 
+  FlaskConical, 
+  Wrench, 
   BarChart3, 
   Settings, 
   ChevronLeft, 
   ChevronRight, 
   Sun, 
-  Moon, 
-  User,
-  ShieldCheck
+  Moon
 } from 'lucide-react';
 import { cn } from '../lib/utils.js';
 import { useTheme } from '../lib/theme.js';
@@ -26,9 +26,11 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ openFindingsCount }) => 
   const { resolvedTheme, toggleTheme } = useTheme();
 
   const navItems = [
-    { to: '/app/findings', label: 'Findings', icon: ShieldAlert, badge: openFindingsCount },
+    { to: '/app/overview', label: 'Overview', icon: LayoutDashboard },
     { to: '/app/pulls', label: 'Pull requests', icon: GitPullRequest },
-    { to: '/app/scan', label: 'Scan', icon: TerminalIcon },
+    { to: '/app/findings', label: 'Findings', icon: ShieldAlert, badge: openFindingsCount },
+    { to: '/app/tests', label: 'Tests', icon: FlaskConical },
+    { to: '/app/fixes', label: 'Fixes', icon: Wrench, badge: 2 },
     { to: '/app/insights', label: 'Insights', icon: BarChart3 },
     { to: '/app/settings', label: 'Settings', icon: Settings },
   ];
@@ -36,7 +38,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ openFindingsCount }) => 
   return (
     <aside
       className={cn(
-        'h-screen sticky top-0 shrink-0 border-r border-[var(--line)] bg-[var(--surface)] flex flex-col justify-between transition-all duration-200 z-30',
+        'h-screen sticky top-0 shrink-0 border-r border-[var(--line)] bg-[var(--surface)] flex flex-col justify-between transition-all duration-200 z-30 select-none',
         collapsed ? 'w-16' : 'w-[232px]'
       )}
     >
@@ -70,7 +72,7 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({ openFindingsCount }) => 
           </button>
         </div>
 
-        {/* Navigation list */}
+        {/* Seven Navigation items */}
         <nav className="p-2 space-y-1" aria-label="Main Navigation">
           {navItems.map((item) => {
             const Icon = item.icon;

@@ -112,13 +112,13 @@ export const LandingPage: React.FC = () => {
 
         <div className="flex items-center gap-3">
           <Link
-            to="/app/findings"
+            to="/app/overview"
             className="text-xs font-medium text-[#5F5F5F] hover:text-[#0A0A0A] px-3 py-1.5 transition-colors hidden sm:block"
           >
             Log in
           </Link>
           <Link
-            to="/app/findings"
+            to="/app/overview"
             className="text-xs font-semibold px-3.5 py-1.5 rounded-[6px] bg-[#0A0A0A] text-[#FFFFFF] hover:opacity-90 transition-opacity"
           >
             Get started
@@ -144,7 +144,7 @@ export const LandingPage: React.FC = () => {
 
           <div className="flex items-center gap-4 pt-2 flex-wrap">
             <Link
-              to="/app/findings"
+              to="/app/overview"
               className="inline-flex items-center gap-2 h-11 px-6 rounded-[6px] bg-[#0A0A0A] text-[#FFFFFF] text-sm font-semibold hover:opacity-90 transition-opacity"
             >
               <span>Get started</span>
