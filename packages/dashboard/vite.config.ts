@@ -24,7 +24,7 @@ export default defineConfig({
               status: 'online',
               version: '1.0.0',
               engines: ['ReviewEngine', 'SecurityEngine', 'VerificationEngine', 'MCPServer'],
-              activePort: 3002
+              activePort: 3000
             }));
             return;
           }
@@ -53,7 +53,7 @@ export default defineConfig({
     }
   ],
   server: {
-    port: 3002,
+    port: 3000,
     host: true
   }
 });

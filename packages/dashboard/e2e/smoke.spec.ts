@@ -1,6 +1,6 @@
 import { test, expect } from '@playwright/test';
 
-const BASE_URL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3002';
+const BASE_URL = process.env.PLAYWRIGHT_TEST_BASE_URL || 'http://localhost:3000';
 
 test.describe('Sherlock Part 2 Full Route Smoke Tests', () => {
   test('Landing Page (/) renders headline, trace line, and nav', async ({ page }) => {
