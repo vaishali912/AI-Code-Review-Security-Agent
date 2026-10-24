@@ -9,3 +9,4 @@ export * from './triage/reachability.js';
 export * from './scanner.js';
 export * from './formatters/sarif.js';
 export * from './formatters/markdown.js';
+export * from './agent/index.js';

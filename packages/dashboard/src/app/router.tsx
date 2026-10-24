@@ -1,6 +1,9 @@
 import React from 'react';
 import { createBrowserRouter, Navigate } from 'react-router-dom';
 import { LandingPage } from '../features/landing/LandingPage.js';
+import { LoginPage } from '../features/auth/LoginPage.js';
+import { SignupPage } from '../features/auth/SignupPage.js';
+import { ProtectedRoute } from '../features/auth/ProtectedRoute.js';
 import { AppShell } from './AppShell.js';
 import { OverviewPage } from '../features/overview/OverviewPage.js';
 import { FindingsPage } from '../features/findings/FindingsPage.js';
@@ -17,8 +20,20 @@ export const router = createBrowserRouter([
     element: <LandingPage />
   },
   {
+    path: '/login',
+    element: <LoginPage />
+  },
+  {
+    path: '/signup',
+    element: <SignupPage />
+  },
+  {
     path: '/app',
-    element: <AppShell />,
+    element: (
+      <ProtectedRoute>
+        <AppShell />
+      </ProtectedRoute>
+    ),
     children: [
       {
         index: true,

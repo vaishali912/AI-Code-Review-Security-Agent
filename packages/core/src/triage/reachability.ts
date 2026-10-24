@@ -93,7 +93,7 @@ export class ReachabilityEngine {
     const effectiveSeverity = this.config.severityOverrides?.[candidate.ruleId] || candidate.severity;
 
     return {
-      id: generateFindingId(),
+      id: generateFindingId(fingerprint),
       fingerprint,
       title: candidate.title,
       cwe: candidate.cwe,

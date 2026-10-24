@@ -144,6 +144,52 @@ export class CodeGraph {
         return;
       }
 
+      // Support variable statements (export const GET = async () => ..., export const myAction = async () => ...)
+      if (ts.isVariableStatement(node)) {
+        const exported = !!node.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword);
+        for (const decl of node.declarationList.declarations) {
+          if (ts.isIdentifier(decl.name) && decl.initializer && (ts.isArrowFunction(decl.initializer) || ts.isFunctionExpression(decl.initializer))) {
+            const name = decl.name.text;
+            const line = sourceFile.getLineAndCharacterOfPosition(decl.getStart()).line + 1;
+            symbols.set(name, { name, file: filePath, line, kind: 'function', exported });
+
+            if (isNextRouteFile && exported && ['GET', 'POST', 'PUT', 'DELETE', 'PATCH'].includes(name.toUpperCase())) {
+              const authKeywords = ['auth', 'session', 'getserversession', 'currentuser', 'verifytoken'];
+              const bodyText = decl.initializer.body ? decl.initializer.body.getText(sourceFile).toLowerCase() : '';
+              const hasAuth = authKeywords.some(kw => bodyText.includes(kw));
+
+              routes.push({
+                method: name.toUpperCase(),
+                path: this.inferNextAppPath(filePath),
+                file: filePath,
+                line,
+                framework: 'nextjs-app-router',
+                handlerName: name,
+                middleware: [],
+                hasAuthGuard: hasAuth,
+                isInternetFacing: true
+              });
+            }
+
+            if (hasUseServer && exported) {
+              const bodyText = decl.initializer.body ? decl.initializer.body.getText(sourceFile).toLowerCase() : '';
+              const hasAuth = ['auth', 'session', 'getserversession', 'requireuser'].some(kw => bodyText.includes(kw));
+              routes.push({
+                method: 'POST (Server Action)',
+                path: `action://${name}`,
+                file: filePath,
+                line,
+                framework: 'nextjs-server-action',
+                handlerName: name,
+                middleware: [],
+                hasAuthGuard: hasAuth,
+                isInternetFacing: true
+              });
+            }
+          }
+        }
+      }
+
       // 3. Collect call expressions (Express routes, app.use, db.query, etc.)
       if (ts.isCallExpression(node)) {
         const line = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1;
@@ -206,15 +252,19 @@ export class CodeGraph {
     };
 
     this.files.set(filePath, fileAST);
+    // Remove stale routes for this file before appending to prevent duplicate accumulation
+    this.routes = this.routes.filter(r => r.file !== filePath);
     this.routes.push(...routes);
     return fileAST;
   }
 
   private inferNextAppPath(filePath: string): string {
     const rel = path.relative(this.rootDir, filePath).replace(/\\/g, '/');
-    const match = rel.match(/app\/(.*?)\/route\.(ts|js)$/);
+    const match = rel.match(/(?:src\/)?app\/(.*?)\/route\.(ts|js)$/);
     if (match) {
-      return '/' + match[1].replace(/\[(.*?)\]/g, ':$1');
+      // Strip route groups like (dashboard) or (auth)
+      const cleanPath = match[1].replace(/\/\(.*?\)/g, '').replace(/^\(.*?\)\//, '');
+      return '/' + cleanPath.replace(/\[(.*?)\]/g, ':$1');
     }
     return '/api';
   }

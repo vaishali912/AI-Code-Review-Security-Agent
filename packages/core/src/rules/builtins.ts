@@ -19,12 +19,21 @@ export const BUILTIN_RULES: SecurityRule[] = [
       const visit = (node: ts.Node) => {
         if (ts.isCallExpression(node)) {
           const callText = node.expression.getText(sourceFile);
+          // Check for db query, but exclude safe prisma.$queryRaw tagged templates (not $queryRawUnsafe)
           const isDbQuery = /(?:db|pool|client|connection|prisma|sequelize|knex)\.(?:query|\$queryRawUnsafe|raw|execute)/i.test(callText);
+          const isSafePrisma = /prisma\.\$queryRaw$/i.test(callText);
 
-          if (isDbQuery && node.arguments.length > 0) {
+          if (isDbQuery && !isSafePrisma && node.arguments.length > 0) {
             const firstArg = node.arguments[0];
             const argText = firstArg.getText(sourceFile);
             const line = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1;
+
+            // If knex.raw has bindings passed as second argument, it is safe parameterization
+            const hasExplicitBindings = node.arguments.length > 1;
+            if (hasExplicitBindings && /knex\.raw/i.test(callText)) {
+              // Knex safe parameterization
+              return;
+            }
 
             // Check if template literal with expressions or binary expression concatenation
             const isTemplateWithExpr = ts.isTemplateExpression(firstArg) && firstArg.templateSpans.length > 0;
@@ -145,8 +154,7 @@ export const BUILTIN_RULES: SecurityRule[] = [
         if (ts.isJsxAttribute(node) && node.name.getText(sourceFile) === 'dangerouslySetInnerHTML') {
           const line = sourceFile.getLineAndCharacterOfPosition(node.getStart()).line + 1;
           const attrVal = node.initializer ? node.initializer.getText(sourceFile) : '';
-
-          const isSanitized = /DOMPurify|sanitize|escapeHtml/i.test(attrVal);
+          const isSanitized = /(?:DOMPurify\.sanitize|\b(?:sanitizeHtml|escapeHtml)\b)/i.test(attrVal) && !/unsanitized|noSanitize|rawHtml/i.test(attrVal);
           if (!isSanitized) {
             findings.push({
               ruleId: 'sherlock.xss.dangerouslysetinnerhtml',

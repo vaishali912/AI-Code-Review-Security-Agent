@@ -92,13 +92,24 @@ customSanitizers:
     banner();
     const findingId = args[1];
     if (!findingId) {
-      console.error(`${c.red}Error: Please specify finding ID: sherlock proof <finding-id>${c.reset}`);
+      console.error(`${c.red}Error: Please specify finding ID: sherlock proof <finding-id> [target-dir]${c.reset}`);
       process.exit(1);
     }
 
-    const scanner = SherlockScanner.create(process.cwd());
-    const res = scanner.scan(process.cwd());
-    const finding = res.findings.find(f => f.id === findingId || f.fingerprint === findingId);
+    const targetArg = args[2] || process.cwd();
+    const scanDir = path.resolve(process.cwd(), targetArg);
+    const scanner = SherlockScanner.create(scanDir);
+    let res = scanner.scan(scanDir);
+    let finding = res.findings.find(f => f.id === findingId || f.fingerprint === findingId || f.fingerprint.startsWith(findingId) || f.id.includes(findingId));
+
+    if (!finding && targetArg === process.cwd()) {
+      const benchDir = path.resolve(process.cwd(), 'benchmark/vulnerable-app');
+      if (fs.existsSync(benchDir)) {
+        const benchScanner = SherlockScanner.create(benchDir);
+        const benchRes = benchScanner.scan(benchDir);
+        finding = benchRes.findings.find(f => f.id === findingId || f.fingerprint === findingId || f.fingerprint.startsWith(findingId) || f.id.includes(findingId));
+      }
+    }
 
     if (!finding) {
       console.error(`${c.red}Finding '${findingId}' not found in active codebase.${c.reset}`);
@@ -131,7 +142,6 @@ customSanitizers:
   }
 
   // Default: scan command
-  banner();
   let targetPath = process.cwd();
   let format: 'human' | 'json' | 'sarif' = 'human';
   let failOn: Severity = 'high';
@@ -146,6 +156,10 @@ customSanitizers:
     } else if (args[i] !== 'scan' && !args[i].startsWith('-')) {
       targetPath = path.resolve(process.cwd(), args[i]);
     }
+  }
+
+  if (format === 'human') {
+    banner();
   }
 
   const scanner = SherlockScanner.create(process.cwd());

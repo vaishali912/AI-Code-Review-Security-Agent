@@ -8,6 +8,9 @@ export function computeFingerprint(ruleId: string, sinkSnippet: string, routeOrF
   return crypto.createHash('sha256').update(raw).digest('hex').slice(0, 32);
 }
 
-export function generateFindingId(): string {
+export function generateFindingId(fingerprint?: string): string {
+  if (fingerprint) {
+    return 'fnd_' + fingerprint.slice(0, 16);
+  }
   return 'fnd_' + crypto.randomBytes(8).toString('hex');
 }

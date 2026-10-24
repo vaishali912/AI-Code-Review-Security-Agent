@@ -6,7 +6,8 @@
   "type": "module",
   "scripts": {
     "build": "tsc",
-    "watch": "tsc -w"
+    "watch": "tsc -w",
+    "test": "node --test dist/__tests__/*.test.js"
   },
   "dependencies": {
     "typescript": "^5.7.0",

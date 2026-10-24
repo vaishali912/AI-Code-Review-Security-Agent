@@ -21,7 +21,10 @@ export function generateMermaidDiagram(findings: Finding[], changedFiles: string
         nodes.add(`${nodeId}[${nodeLabel}]`);
 
         if (prevNode) {
-          edges.push(`${prevNode} -->|"${step.snippet ? step.snippet.slice(0, 20) : 'tainted data'}"| ${nodeId}`);
+          const safeSnippet = step.snippet
+            ? step.snippet.replace(/["\r\n\\]/g, ' ').trim().slice(0, 24)
+            : 'tainted data';
+          edges.push(`${prevNode} -->|"${safeSnippet}"| ${nodeId}`);
         }
         prevNode = nodeId;
       });
